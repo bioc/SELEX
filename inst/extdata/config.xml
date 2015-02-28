@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SELEXSequencingConfig  xmlns:xsi="http://www.columbia.edu/"  xsi:noNamespaceSchemaLocation="selex.xsd">
+	<SequencingRunInfo name="R0.libraries">	 <!-- information needed for differentiating multiple sequencing info instances -->
+	
+		<DataFile>R0.fastq.gz</DataFile> <!-- abosulte/relative/windows paths -->
+		<SequencingPlatform>Illumina</SequencingPlatform>
+		<ResearcherName>Harmen J. Bussemaker</ResearcherName>
+		<ResearcherEmail>hjb2004@columbia.edu</ResearcherEmail>
+		<SequencingFacilityName>Columbia University</SequencingFacilityName>
+		<SequencingFacilityEmail></SequencingFacilityEmail>
+		<Description></Description> <!--  -->
+		<Notes>These data have been heavily down-sampled and are for demonstration purposes only</Notes>
+			
+		<Sample name="R0.barcodeGC" round="0">
+			<Protein></Protein>
+			<Concentration></Concentration>		<!-- #optional -->
+			<VariableRegionLength>16</VariableRegionLength>
+			<LeftFlank>GTTCAGAGTTCTACAGTCCGACGATCTGG</LeftFlank>  
+			<RightFlank>CCAGCTGTCGTATGCCGTCTTCTGCTTG</RightFlank> 
+			<LeftBarcode>TGG</LeftBarcode>
+			<RightBarcode>CCAGCTG</RightBarcode>
+			<Round0></Round0>
+			<Notes>initial random DNA pool with "GC" barcode in right flank</Notes>
+		</Sample>
+	
+		<Sample name="R0.barcodeCG" round="0">
+			<Protein></Protein>
+			<Concentration></Concentration>		<!-- #optional -->
+			<VariableRegionLength>16</VariableRegionLength>
+			<LeftFlank>GTTCAGAGTTCTACAGTCCGACGATCTGG</LeftFlank>  
+			<RightFlank>CCACGTCTCGTATGCCGTCTTCTGCTTG</RightFlank> 
+			<LeftBarcode>TGG</LeftBarcode>
+			<RightBarcode>CCACGTC</RightBarcode>
+			<Round0></Round0>
+			<Notes>initial random DNA pool with "GC" barcode in right flank</Notes>
+		</Sample>
+	
+	</SequencingRunInfo>
+
+	<!-- #New FASTQ file below -->
+
+	<SequencingRunInfo name="R2.libraries">	 <!-- information needed for differentiating multiple sequencing info instances -->
+	
+		<DataFile>R2.fastq.gz</DataFile> 
+		<SequencingPlatform>Illumina</SequencingPlatform>
+		<ResearcherName>Harmen J. Bussemaker</ResearcherName>
+		<ResearcherEmail>hjb2004@columbia.edu</ResearcherEmail>
+		<SequencingFacilityName>Columbia University</SequencingFacilityName>
+		<SequencingFacilityEmail></SequencingFacilityEmail> 
+		<Description>Round 2</Description> 
+		<Notes>These data have been heavily down-sampled and are for demonstration purposes only</Notes>
+			
+		<Sample name="ExdHox.R2" round="2">
+			<Protein>ExdHox</Protein>
+			<Concentration></Concentration>		<!-- #optional -->
+			<VariableRegionLength>16</VariableRegionLength>
+			<LeftFlank>GTTCAGAGTTCTACAGTCCGACGATCTGG</LeftFlank>  
+			<RightFlank>CCAGCTGTCGTATGCCGTCTTCTGCTTG</RightFlank> 
+			<LeftBarcode>TGG</LeftBarcode>
+			<RightBarcode>CCAGCTG</RightBarcode>
+			<Round0 sampleName="R0.barcodeGC" sequencingName="R0.libraries"/>
+			<Notes></Notes>
+		</Sample>
+	
+	</SequencingRunInfo>
+
+</SELEXSequencingConfig>

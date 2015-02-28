@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	
+	<!-- Sequencing Configuration Definition -->
+	
+	<xs:element name="SELEXSequencingConfig">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="SequencingRunInfo" minOccurs="1" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="SequencingRunInfo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DataFile" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="DataFileType" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="SequencingPlatform" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="ResearcherName" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="ResearcherEmail" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="SequencingFacilityName" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="SequencingFacilityEmail" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="Description" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="Notes" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="Sample" minOccurs="1" maxOccurs="unbounded" />
+			</xs:sequence>
+		 	<xs:attribute name="name" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="Sample">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Protein" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="Concentration" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="VariableRegionLength" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="LeftFlank"  minOccurs="0" maxOccurs="1" />
+				<xs:element ref="RightFlank"  minOccurs="0" maxOccurs="1" />
+				<xs:element ref="LeftBarcode"  minOccurs="1" maxOccurs="1" />
+				<xs:element ref="RightBarcode"  minOccurs="1" maxOccurs="1" />
+				<xs:element ref="Round0"  minOccurs="0" maxOccurs="1" />
+				<xs:element ref="Notes" minOccurs="1" maxOccurs="1" />
+			</xs:sequence>
+		 	<xs:attribute name="name" type="xs:string" use="required"/>
+		 	<xs:attribute name="round" type="xs:int" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="DataFile" type="xs:string"/>
+	<xs:element name="DataFileType" type="xs:string" default="FASTQ.TXT"/>
+	
+	<xs:element name="SequencingPlatform" type="xs:string" default="" />
+	<xs:element name="ResearcherName" type="xs:string" default="" />
+	<xs:element name="ResearcherEmail" type="xs:string" default="" />
+	<xs:element name="SequencingFacilityName" type="xs:string" default="" />
+	<xs:element name="SequencingFacilityEmail" type="xs:string" default="" />
+	<xs:element name="Notes" type="xs:string" default="" />
+	<xs:element name="Description" type="xs:string" default="" />
+	
+	<xs:element name="Protein" type="xs:string" default="" />
+	<xs:element name="Concentration" type="xs:string" default="" />
+	<xs:element name="Filter" type="xs:string" default="" />
+	<xs:element name="VariableRegionLength" type="xs:int"/>
+	<xs:element name="LeftFlank" type="xs:string"/>
+	<xs:element name="RightFlank" type="xs:string"/>
+	<xs:element name="LeftBarcode" type="xs:string"/>
+	<xs:element name="RightBarcode" type="xs:string"/>
+	
+	<xs:element name="Round0">
+		<xs:complexType>
+		  <xs:attribute name="sequencingName"  type="xs:string"  use="required"/>
+		  <xs:attribute name="sampleName" type="xs:string" use="required"/>
+		  <xs:attribute name="sampleRound" type="xs:integer" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	
+	
+	<!-- Process Configuration -->
+
+	<xs:element name="SELEXProcessConfig">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="SequencingConfigPath" minOccurs="1" maxOccurs="unbounded"  />
+				<xs:element ref="Process"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="Process">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Model"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="Model">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DataSource"/>
+				<xs:element ref="CrossValidation"/>
+				<xs:element ref="InformationGain"/>
+				<xs:element ref="Settings"/>
+			</xs:sequence>
+		 	<xs:attribute name="type" type="xs:string" use="optional" default="markov"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="DataSource">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ExperimentReference"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="CrossValidation">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ExperimentReference"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="InformationGain">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ExperimentReference"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Settings">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="MinimalCount"  minOccurs="1" maxOccurs="1" />
+				<xs:element ref="BarcodeOffset"  minOccurs="1" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="ExperimentReference">
+		<xs:complexType>
+		  <xs:attribute name="sequencingName"  type="xs:string"  use="required"/>
+		  <xs:attribute name="sampleName" type="xs:string" use="required"/>
+		  <xs:attribute name="sampleRound" type="xs:int" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="MinimalCount" type="xs:int"/>
+	<xs:element name="BarcodeOffset" type="xs:int"/>
+	<xs:element name="SequencingConfigPath" type="xs:string"/>
+	
+	
+	<!--stats -->
+	<xs:element name="SELEXStats">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="InputDataSetStats" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="KmerCountStats" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="MarkovModelStats" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="InformationGainStats" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="SELEXPipeline" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="AdditionalDataSet" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="InputDataSetStats">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="OriginalDataFilePath" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="CachedDataFilePath" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="ExperimentReference" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="LeftBarcode" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="RightBarcode" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="Filter" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="TotalLineCount" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="TotalReadCount" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="TotalBarcodeMatchedReadCount" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="ValidReadCount" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="Kmax" minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+		 	<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="OriginalDataFilePath" type="xs:string"/>
+	<xs:element name="CachedDataFilePath" type="xs:string"/>
+	<xs:element name="TotalLineCount" type="xs:long"/>
+	<xs:element name="TotalReadCount" type="xs:long"/>
+	<xs:element name="TotalBarcodeMatchedReadCount" type="xs:long"/>
+	<xs:element name="ValidReadCount" type="xs:long"/>
+	<xs:element name="Kmax" type="xs:int"/>		
+	
+	<xs:element name="AdditionalDataSet">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Tag" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="OriginalDataFilePath" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="ExperimentReference" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="ConfigurationPath" minOccurs="1" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="ConfigurationPath" type="xs:string"/>
+	<xs:element name="Tag" type="xs:string"/>
+	
+	<xs:element name="KmerCountStats">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ExperimentReference" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="Filter" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="Length" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="Offset" minOccurs="1" maxOccurs="1"  />
+				<xs:element ref="LowestCount" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="HighestCount" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="ValidReadCount" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="KmerCountStatsTablePath" minOccurs="1" maxOccurs="1" />
+			</xs:sequence>
+		 	<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="Length" type="xs:int"/>
+	<xs:element name="Offset" type="xs:int"  default="-1"/>
+	<xs:element name="LowestCount" type="xs:long"/>
+	<xs:element name="HighestCount" type="xs:long"/>
+	<xs:element name="KmerCountStatsTablePath" type="xs:string"/>
+	
+	<xs:element name="MarkovModelStats">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ExperimentReference" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="Filter" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="CrossValidationSetting" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="ModelLength" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="MarkovModelMethod" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="ModelOrder" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="TransitionTablePath" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="ModelLogPath" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="PearsonCoefficient" minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+		 	<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="CrossValidationSetting">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ExperimentReference" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="Length" minOccurs="1" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="ModelLength" type="xs:int"/>
+	<xs:element name="ModelOrder" type="xs:int"/>
+	<xs:element name="MarkovModelMethod" type="xs:string"/>
+	<xs:element name="TransitionTablePath" type="xs:string"/>
+	<xs:element name="ModelLogPath" type="xs:string"/>
+	<xs:element name="PearsonCoefficient" type="xs:double"/>
+	
+	
+	<xs:element name="InformationGainStats">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ExperimentReference" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="Filter" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="Length" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="ModelID" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="MarkovModelMethod" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="InformationGainValue" minOccurs="1" maxOccurs="1" />
+			</xs:sequence>
+		 	<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="ModelID" type="xs:string"/>
+	<xs:element name="InformationGainValue" type="xs:double"/>
+	
+	<xs:element name="SELEXPipeline">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Kmax" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="ModelID" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="InformationGainCurrentRound" minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+		 	<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="InformationGainCurrentRound" type="xs:int"/>
+	
+</xs:schema>

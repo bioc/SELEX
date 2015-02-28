@@ -1,0 +1,162 @@
+%\VignetteIndexEntry{Motif Discovery with SELEX-seq}
+%\VignetteKeywords{SELEX,Selex,selex}
+%\VignettePackage{SELEX}
+
+\documentclass[12pt]{article}
+
+\usepackage{amsmath}
+
+\newcommand{\scscst}{\scriptscriptstyle}
+\newcommand{\scst}{\scriptstyle}
+
+\newcommand{\R}{{\textsf{R}}}
+\newcommand{\code}[1]{{\texttt{#1}}}
+\newcommand{\term}[1]{{\emph{#1}}}
+\newcommand{\Rpackage}[1]{\textsf{#1}}
+\newcommand{\Rfunction}[1]{\texttt{#1}}
+\newcommand{\Robject}[1]{\texttt{#1}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\textit{#1}}}
+\newcommand{\Rfunarg}[1]{{\textit{#1}}}
+
+
+\usepackage{Sweave}
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\input{SELEX-concordance}
+
+\title{Motif Discovery from SELEX-seq data}
+\author{Chaitanya Rastogi, Dahong Liu, and Harmen Bussemaker\\ Columbia University, New York, NY, USA}
+\date{}
+\maketitle
+
+\section{Background}
+This package provides a new and efficient implementation of an approach for analyzing SELEX-seq data. The underlying methodology was developed by Todd Riley and Harmen Bussemaker with significant input from Matthew Slattery and Richard Mann, and described in detail in two papers listed in the References section below: Slattery \emph{et al.} (2011) and Riley \emph{et al.} (2014). We request that you cite both papers when you use this software. This tutorial will walk you through a example SELEX analysis using (down-sampled) data from Slattery \emph{et al.} (2011).
+
+\section{Installation}
+Before installing the \texttt{SELEX} package, you will need to install \texttt{rJava}, which is available from CRAN. If Java is properly installed on your machine, typing \\ \\
+\texttt{install.packages(`rJava')} \\ \\
+should properly install the package. If you encounter any difficulty installing \texttt{rJava}, please refer to its documentation at \texttt{http://www.rforge.net/rJava/}. You can continue the rest of the tutorial after installing the \texttt{SELEX} package.
+
+\section{Initializing the SELEX Workspace}
+Before you load the SELEX package, you need to set the maximum Java memory usage limit:
+<<Load.Package>>=
+options(java.parameters="-Xmx1500M")
+library(SELEX) 
+@
+Workflow in the SELEX package is centered around the workspace. The workspace consists of samples and data files you are currently working with, and the saved outputs of the various analyses you have run on these data. The workspace has a physical location on disk, and can be configured at any time:
+<<Init, results=hide>>=
+workDir = "./cache/"
+selex.config(workingDir=workDir, maxThreadNumber=4)
+@
+Before any analyses can be performed, samples must be made `visible' to the current SELEX session, which can be performed with the \texttt{selex.loadAnnotation} or \texttt{selex.defineSample} commands. Loading a sample lets the current SELEX session know the experimental setup of your data. You are required to provide round, barcode, variable region, and file path information for each sample you load. \texttt{selex.defineSample} is convenient when one needs to quickly analyze new data, but the XML-based database used by \texttt{selex.loadAnnotation} can be very useful for long-term storage and cataloging of data. 
+<<Load.Data, results=hide>>=
+# Extract example data from package, including XML annotation
+exampleFiles = selex.exampledata(workDir)
+
+# Load all sample files using XML database
+selex.loadAnnotation(exampleFiles[3])
+@
+You can use \texttt{selex.sampleSummary} to see the currently available datasets:
+<<Display.Samples>>=
+selex.sampleSummary()
+@
+Sample handles are an easy way to address visible data, and are used by most package functions to allow easy manipulation of your datasets.
+<<Make.Sample.Handles>>=
+r0train = selex.sample(seqName="R0.libraries", 
+            sampleName="R0.barcodeGC", round=0)
+r0test = selex.sample(seqName="R0.libraries", 
+           sampleName="R0.barcodeCG", round=0)
+r2 = selex.sample(seqName="R2.libraries", 
+       sampleName="ExdHox.R2", round=2)
+@
+At this point, you are ready to analyze your data.
+\section{Building the Markov Model}
+In order to properly identify motifs from a SELEX experiment, one needs to be able to characterize the non-randomness of the initial pool of oligomers. This non-randomness can be represented with a Markov model. In order to choose the optimal Markov model, models of various orders will be evaluated, and the one with the greatest cross-validated predictive capability will be chosen. This requires a testing dataset and finding the longest oligonucleotide length $k$ such that all K-mers within this dataset are found at least 100 times. You can find this value using \texttt{selex.kmax}:
+<<Find.Kmax, results=hide>>=
+kmax.value = selex.kmax(sample=r0test)
+@
+Now, the optimal Markov model can be found, built, and stored:
+<<Build.MM,results=hide>>=
+mm = selex.mm(sample=r0train, order=NA, 
+       crossValidationSample=r0test, Kmax=kmax.value)
+@
+You can use \texttt{selex.mmSummary} to see the cross-validated R$^2$ values of these models:
+<<Show.R2>>=
+selex.mmSummary()
+@
+
+<<R2-Plot, fig=TRUE, echo=FALSE>>=
+mm.r2 = selex.mmSummary()
+idx = which(mm.r2$R==max(mm.r2$R))
+colstring = rep('BLUE',nrow(mm.r2))
+colstring[idx]='RED'
+barplot(height=mm.r2$R,names.arg=(mm.r2$Order), ylim=c(.98,1), xpd=FALSE, col=colstring, 
+        xlab="Markov Model Order", ylab=expression(Markov ~ Model ~ R^{2}))
+@
+\section{Finding the Optimal Motif Length}
+By observing how concentrated the distribution of later round K-mers frequences vs. previous round K-mer frequencies becomes, we can find the optimal binding site length. The Kullback-Leibler divergence metric can be used to measure this concentration for a variety of lengths using \texttt{selex.infogain}:
+<<Calc.IG,results=hide>>=
+selex.infogain(sample=r2,markovModel=mm)
+@
+\texttt{selex.infogainSummary} can be used to view the results:
+<<Display.IG>>=
+selex.infogainSummary()[,1:3]
+@
+
+<<Plot-IG,fig=TRUE,echo=FALSE>>=
+infoscores = selex.infogainSummary()
+idx = which(infoscores$InformationGain==max(infoscores$InformationGain))
+colstring = rep('BLUE', nrow(infoscores))
+colstring[idx] = 'RED'
+barplot(height=infoscores$InformationGain, names.arg=infoscores$K, col=colstring,
+        xlab="Oligonucleotide Length (bp)", ylab="Information Gain (bits)")
+optimalLength = infoscores$K[idx]
+@
+
+To see what the K-mer count tables look like for the optimal length, use \texttt{selex.counts}:
+<<Count.Table, results=hide>>=
+table = selex.counts(sample=r2, k=optimalLength, 
+          markovModel=mm)
+@
+
+<<View.Table>>=
+head(table)
+@
+
+\section{Calculating Affinity and Error}
+With the optimal binding length, you can estimate the affinity and the standard error of the estimate with \texttt{selex.affinities} and a Markov Model:
+<<Aff.Table, results=hide>>=
+aff = selex.affinities(sample=r2, k=optimalLength, 
+        markovModel=mm)
+@
+
+<<Disp.Aff>>=
+head(aff)[,1:4]
+@
+<<Disp.Aff.2, echo=FALSE>>=
+head(aff)[,5:6]
+@
+
+\begin{thebibliography}{9}
+
+\bibitem{Slattery2011}
+   % PMID 22153072 
+   Slattery, M.$^*$, Riley, T.$^*$, Liu, P., Abe, N., Gomez-Alcala, P., Dror, I., Zhou, T., 
+   Rohs, R.$^\dagger$, Honig, B.$^\dagger$, Bussemaker, H.J.$^\dagger$,and Mann, R.S.$^\dagger$".
+   (2011)
+   \emph{{C}ofactor binding evokes latent differences in {D}{N}{A} binding specificity between {H}ox proteins.}
+   {\bf Cell} 147:1270--1282.
+   [PMID:22153072]
+
+\bibitem{Riley2014}
+   Riley, T.R.$^*$, Slattery, M.$^*$, Abe, N., Rastogi, C., Liu, D., 
+   Mann, R.S.$^\dagger$, and Bussemaker, H.J.$^\dagger$.
+   (2014)
+   \emph{{S}{E}{L}{E}{X}-seq: a method for characterizing the complete repertoire of binding site preferences for transcription factor complexes.}
+   {\bf Methods Mol.\ Biol.} 1196:255--278.
+   [PMID:25151169]
+
+\end{thebibliography}
+
+\end{document}
