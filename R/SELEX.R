@@ -408,7 +408,7 @@ selex.infogain <- function(sample, k=NULL, markovModel, seqfilter=NULL, checkBar
 	minStart = markovModel$getMarkovLength()
 	indices = NA
 	
-	if( is.null(k) || is.na(k))
+	if(is.null(k) || any(is.na(k)))
 	{
 		indices = minStart:16
 	} else {
