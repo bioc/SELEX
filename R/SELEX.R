@@ -40,55 +40,26 @@ selex.revcomp <- function (kmer, value) {
 }
 
 #done
-selex.config <- function(workingDir=NULL, verbose=FALSE, maxThreadNumber=NULL)
+selex.config <- function(workingDir=NULL, verbose=NULL, maxThreadNumber=NULL)
 {
-	settingPath = file.path(path.expand('~'), 'SELEX.properties')
-	wd=NULL
-	v=NULL
-	myProp=NULL
-	
-	if(file.exists(settingPath))
-	{
-		write(sprintf("Reading the setting file:%s", settingPath), stdout())
-		myProp <- read.table( settingPath, header=FALSE, sep="=", row.names=1, strip.white=TRUE,
-				 na.strings="NULL", stringsAsFactors=FALSE)
-		v = (myProp['verbose',1] =='TRUE' )
-		wd = (myProp['workingDirectory',1])
-	} else{
-		myProp =  data.frame( row.names=c("verbose","workingDirectory"),v=c('NULL','NULL'),
-			stringsAsFactors=FALSE)
-	}
-	
+
 	if(!is.null(verbose))
 	{
-		selex.verbose(verbose)
-		if(verbose)
-		{
-			myProp['verbose',1] = 'TRUE'
-		} else {
-			myProp['verbose',1] = 'FALSE'
-		}
-	} else if(!is.null(v)){
-		selex.verbose(v)
+	  options("bioconductorSELEX.verbose"=verbose)
+	  selex.verbose(verbose)
 	}
-  
-  if(!is.null(maxThreadNumber) && maxThreadNumber>0)
-  {
-     J("base/Util")$setMaxThreadNumber(selex.getInt(maxThreadNumber))
-  }
-	
-	if( !(is.null(workingDir) || is.na(workingDir)))
+
+	if(!is.null(maxThreadNumber) && maxThreadNumber>0)
 	{
-		selex.setwd(workingDir)
-		myProp['workingDirectory',1] = workingDir
-	} else if( !(is.null(wd) || is.na(wd))) {
-		selex.setwd(wd)
+      options("bioconductorSELEX.maxthreads"=maxThreadNumber)
+      J("base/Util")$setMaxThreadNumber(selex.getInt(maxThreadNumber))
+    }
+
+    if( !(is.null(workingDir) || is.na(workingDir)))
+	{
+	  options("bioconductorSELEX.workdir"=workingDir)
+      selex.setwd(workingDir)
 	}
-	
-	write(sprintf("Saving the setting file:%s", settingPath), stdout())
-	tryCatch( write.table(myProp, file = settingPath, append = FALSE, quote = FALSE, sep = "=",
-            eol = "\n", na = "NULL", dec = ".", row.names = TRUE,
-            col.names = FALSE, qmethod = c("escape", "double")) ,  error=function(e) NULL)
 }
 
 
