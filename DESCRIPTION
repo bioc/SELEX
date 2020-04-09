@@ -1,15 +1,15 @@
 Package: SELEX
 Title: Functions for analyzing SELEX-seq data
-Version: 1.19.4
-Date: 2015-01-08
-Author: Chaitanya Rastogi, Dahong Liu, and Harmen Bussemaker
+Version: 1.19.5
+Date: 2020-04-08
+Author: Chaitanya Rastogi, Dahong Liu, Lucas Melo, and Harmen J. Bussemaker
 Depends: rJava (>= 0.5-0), Biostrings (>= 2.26.0)
 Imports: stats, utils
 SystemRequirements: Java (>= 1.5)
-Maintainer: Harmen Bussemaker <hjb2004@columbia.edu>
+Maintainer: Harmen J. Bussemaker <hjb2004@columbia.edu>
 Description: Tools for quantifying DNA binding specificities based on
         SELEX-seq data.
 License: GPL (>=2)
 biocViews: Software, MotifDiscovery, MotifAnnotation, GeneRegulation,
         Transcription
-URL: http://bussemakerlab.org/software/SELEX/
+URL: https://bussemakerlab.org/site/software/
