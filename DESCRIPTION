@@ -1,6 +1,6 @@
 Package: SELEX
 Title: Functions for analyzing SELEX-seq data
-Version: 1.26.0
+Version: 1.27.0
 Date: 2019-09-01
 Author: Chaitanya Rastogi, Dahong Liu, Lucas Melo, and Harmen J. Bussemaker
 Depends: rJava (>= 0.5-0), Biostrings (>= 2.26.0)
